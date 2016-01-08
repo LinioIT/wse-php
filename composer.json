@@ -1,0 +1,12 @@
+{
+    "name": "linio/wse-php",
+    "type": "library",
+    "license": "BSD",
+    "description": "Fork of https://github.com/robrichards/wse-php",
+    "autoload": {
+        "classmap": [
+            "src/",
+            "xmlseclibs.php"
+        ]
+    }
+}
