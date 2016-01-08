@@ -1,13 +1,21 @@
 {
     "name": "linio/wse-php",
-    "type": "library",
-    "license": "BSD",
     "description": "Fork of https://github.com/robrichards/wse-php",
+    "authors": [
+        {
+            "name": "Rob Richards",
+            "homepage": "http://www.cdatazone.org/",
+            "role": "Main developer"
+        }
+    ],
+    "license": "BSD-3-Clause",
+    "keywords": [
+        "SOAP",
+        "WS-Addressing",
+        "WS-Security"
+    ],
+    "homepage": "https://github.com/robrichards/wse-php",
     "autoload": {
-        "classmap": [
-            "src/",
-            "xmlseclibs.php"
-        ]
         "psr-4": {
             "RobRichards\\WsePhp\\": "src"
         }
