@@ -1,4 +1,14 @@
 <?php
+namespace RobRichards\WsePhp;
+
+use DOMElement;
+use DOMText;
+use DOMXPath;
+use Exception;
+use RobRichards\XMLSecLibs\XMLSecEnc;
+use RobRichards\XMLSecLibs\XMLSecurityDSig;
+use RobRichards\XMLSecLibs\XMLSecurityKey;
+
 /**
  * WSSESoap.php
  *
