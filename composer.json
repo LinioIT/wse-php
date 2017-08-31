@@ -8,5 +8,12 @@
             "src/",
             "xmlseclibs.php"
         ]
+        "psr-4": {
+            "RobRichards\\WsePhp\\": "src"
+        }
+    },
+    "require": {
+        "php": ">= 5.3",
+        "robrichards/xmlseclibs": ">=2.0"
     }
 }
