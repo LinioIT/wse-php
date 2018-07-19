@@ -217,6 +217,40 @@ class WSSESoap
         }
     }
 
+    public function addIssuerSerial($X509Cert)
+    {
+        $name = $this->getIssuerName($X509Cert);
+        $serialNumber = $this->getSerialNumber($X509Cert);
+
+        $objXMLSecDSig = new XMLSecurityDSig();
+        if ($objDSig = $objXMLSecDSig->locateSignature($this->soapDoc)) {
+            $this->SOAPXPath->registerNamespace('secdsig', XMLSecurityDSig::XMLDSIGNS);
+            $query = "./secdsig:KeyInfo";
+            $nodeset = $this->SOAPXPath->query($query, $objDSig);
+            $keyInfo = $nodeset->item(0);
+            if (!$keyInfo) {
+                $keyInfo = $objXMLSecDSig->createNewSignNode('KeyInfo');
+                $objDSig->appendChild($keyInfo);
+            }
+
+            $tokenRef = $this->soapDoc->createElementNS(WSSESoap::WSSENS, WSSESoap::WSSEPFX . ':SecurityTokenReference');
+            $keyInfo->appendChild($tokenRef);
+            $x509Data = $objXMLSecDSig->createNewSignNode("X509Data");
+            $x509IssuerSerial = $objXMLSecDSig->createNewSignNode("X509IssuerSerial");
+            $x509Data->appendChild($x509IssuerSerial);
+
+            $x509IssuerName = $objXMLSecDSig->createNewSignNode("X509IssuerName", $name);
+            $x509SerialNumber = $objXMLSecDSig->createNewSignNode("X509SerialNumber", $serialNumber);
+
+            $x509IssuerSerial->appendChild($x509IssuerName);
+            $x509IssuerSerial->appendChild($x509SerialNumber);
+
+            $tokenRef->appendChild($x509Data);
+        } else {
+            throw new Exception('Unable to locate digital signature');
+        }
+    }
+
     public function signSoapDoc($objKey, $options = null)
     {
         $objDSig = new XMLSecurityDSig();
@@ -527,5 +561,35 @@ class WSSESoap
     public function save($file)
     {
         return $this->soapDoc->save($file);
+    }
+
+    /**
+     * from xmlseclibs
+     * @copyright  2007-2010 Robert Richards <rrichards@cdatazone.org>
+     */
+    protected function getIssuerName($X509Cert)
+    {
+        $handler = fopen($X509Cert, "r");
+        $cert = fread($handler, 8192);
+        fclose($handler);
+        $cert_as_array = openssl_x509_parse($cert);
+        $name = $cert_as_array['name'];
+        $name = str_replace("/", ",", $name);
+        $name = substr($name, 1, strlen($name));
+        return $name;
+    }
+
+    /**
+     * from xmlseclibs
+     * @copyright  2007-2010 Robert Richards <rrichards@cdatazone.org>
+     */
+    protected function getSerialNumber($X509Cert)
+    {
+        $handler = fopen($X509Cert, "r");
+        $cert = fread($handler, 8192);
+        fclose($handler);
+        $cert_as_array = openssl_x509_parse($cert);
+        $serialNumber = $cert_as_array['serialNumber'];
+        return $serialNumber;
     }
 }
